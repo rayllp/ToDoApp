@@ -1,12 +1,11 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, InputLabel, MenuItem, FormControl, Select, OutlinedInput } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, InputLabel, MenuItem, FormControl, Select } from "@mui/material";
 import { useState } from "react";
+import DatePicker from 'react-datepicker';
+import './App.css';
 
-const FormDialog = ({ getTitleData, getBodyData, getPriorityData, setInputTask }) => {
-
-    //const [taskInput, setTaskInput] = useState("initial value");
+const FormDialog = ({ getTitleData, getBodyData, getPriorityData, addNewTask }) => {
 
     const [open, openChange] = useState(false);
-    const [priority, setPriority] = useState('');
 
     const openPopUp = () => {
         openChange(true);
@@ -15,13 +14,20 @@ const FormDialog = ({ getTitleData, getBodyData, getPriorityData, setInputTask }
         openChange(false);
     }
     const CloseAndAdd = () => {
-        setInputTask();
+        const dateString = day + "/" + month + "/" + year;
+        addNewTask(dateString);
+        setDateInput(new Date());
         closePopUp();
     }
 
+    const [dateInput, setDateInput] = useState(new Date());
+
+    const year = dateInput.getFullYear();
+    const month = String(dateInput.getMonth() + 1).padStart(2, '0');;
+    const day = String(dateInput.getDate()).padStart(2, '0');
 
     return (
-        <div /*style={{ textAlign: 'center' }}*/>
+        <div>
             <Button onClick={openPopUp} sx={{
                 boxShadow: 'none', color: 'white', backgroundColor: 'gray', border: 1,
                 '&:hover': { backgroundColor: 'darkgray', boxShadow: 'none' }
@@ -34,10 +40,7 @@ const FormDialog = ({ getTitleData, getBodyData, getPriorityData, setInputTask }
                         <InputLabel id="demo-simple-select-standard-label">Priority</InputLabel>
                         <Select
                             label="Priority"
-                            
                             onChange={getPriorityData}
-
-
                         >
                             <MenuItem value={'Green'}>Low Priority</MenuItem>
                             <MenuItem value={'Orange'}>Medium Priority</MenuItem>
@@ -56,19 +59,30 @@ const FormDialog = ({ getTitleData, getBodyData, getPriorityData, setInputTask }
                         autoFocus
                         label="task content"
                         variant="outlined"
-                        //multiline
                         rows={3}
                         onChange={getBodyData}
                     />
+                    <br />
+                    <DatePicker
+                        selected={dateInput}
+                        onChange={(date) => setDateInput(date)}
+                        dateFormat="dd/MM/yyyy"
+                        useShortMonthInDropdown
+                        className="date-time-picker"
+                        minDate={Date()}
+                    />
                 </DialogContent>
+
                 <DialogActions>
-                    <Button onClick={CloseAndAdd} sx={{ color: 'blue' }} variant="contained">
+                    <Button onClick={CloseAndAdd} sx={{
+                        boxShadow: 'none', color: 'white', backgroundColor: 'gray', border: 1,
+                        '&:hover': { backgroundColor: 'darkgray', boxShadow: 'none' }
+                    }} variant="contained">
                         add task
                     </Button>
                 </DialogActions>
             </Dialog>
         </div>
-
     );
 }
 
