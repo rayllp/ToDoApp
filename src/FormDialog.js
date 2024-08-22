@@ -3,10 +3,11 @@ import { useState } from "react";
 import DatePicker from 'react-datepicker';
 import './App.css';
 
-const FormDialog = ({ getTitleData, getBodyData, getPriorityData, addNewTask }) => {
+const FormDialog = ({ setInputData, addNewTask }) => {
 
     // It is customary to name state created by the useState function to [open, setOpen]
     const [open, openChange] = useState(false);
+    const [dateInput, setDateInput] = useState(new Date());
 
     // These functions are pretty redundant, seeing as you can just use setOpen(true) or setOpen(false)
     const openPopUp = () => {
@@ -18,13 +19,13 @@ const FormDialog = ({ getTitleData, getBodyData, getPriorityData, addNewTask }) 
     // I would probably rename this as onSubmit
     const CloseAndAdd = () => {
         const dateString = day + "/" + month + "/" + year;
-        addNewTask(dateString);
+        addNewTask(dateInput.toDateString());
         setDateInput(new Date());
-        closePopUp();
+        openChange(false)
     }
 
     // I would put all of my useStates together at the top of the component
-    const [dateInput, setDateInput] = useState(new Date());
+    
 
     // You might have an easier time by using a dedicated date library (there are lots to choose from because dealing with dates is a pain in the arse)
     const year = dateInput.getFullYear();
@@ -45,7 +46,7 @@ const FormDialog = ({ getTitleData, getBodyData, getPriorityData, addNewTask }) 
                         <InputLabel id="demo-simple-select-standard-label">Priority</InputLabel>
                         <Select
                             label="Priority"
-                            onChange={getPriorityData}
+                            onChange={(e) => setInputData(e, 'priority')}
                         >
                             <MenuItem value={'Green'}>Low Priority</MenuItem>
                             <MenuItem value={'Orange'}>Medium Priority</MenuItem>
@@ -57,7 +58,8 @@ const FormDialog = ({ getTitleData, getBodyData, getPriorityData, addNewTask }) 
                         autoFocus
                         label="task title"
                         variant="outlined"
-                        onChange={getTitleData}
+                        onChange={(e) => setInputData(e, 'title')}
+                        // onChange={getTitleData}
                     />
                     <br />
                     <TextField
@@ -65,7 +67,7 @@ const FormDialog = ({ getTitleData, getBodyData, getPriorityData, addNewTask }) 
                         label="task content"
                         variant="outlined"
                         rows={3}
-                        onChange={getBodyData}
+                        onChange={(e) => setInputData(e, 'body')}
                     />
                     <br />
                     {/* It would be nice to have a label associated with the date picker component, just to make it very clear to the user that they are selecting a due date for the to do item */}
